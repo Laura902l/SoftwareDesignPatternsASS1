@@ -1,0 +1,84 @@
+package main
+
+import (
+	"fmt"
+)
+
+type Observer interface {
+	Update(event Event)
+}
+
+type Subject interface {
+	Register(Observer)
+	Deregister(Observer)
+	NotifyAll(Event)
+}
+type Event struct {
+	Date  string
+	Place string
+	Cost  int
+}
+
+type EventPublisher struct {
+	observers []Observer
+}
+
+func NewEventPublisher() *EventPublisher {
+	return &EventPublisher{}
+}
+
+func (p *EventPublisher) Register(observer Observer) {
+	p.observers = append(p.observers, observer)
+}
+
+func (p *EventPublisher) Deregister(observer Observer) {
+	for i, o := range p.observers {
+		if o == observer {
+
+			p.observers = append(p.observers[:i], p.observers[i+1:]...)
+			break
+		}
+	}
+}
+
+func (p *EventPublisher) NotifyAll(event Event) {
+	for _, observer := range p.observers {
+		observer.Update(event)
+	}
+}
+
+type Subscriber struct {
+	FirstName string
+	LastName  string
+}
+
+func NewSubscriber(firstName, lastName string) *Subscriber {
+	return &Subscriber{firstName, lastName}
+}
+
+func (s *Subscriber) Update(event Event) {
+	fmt.Printf("Dear %s %s,\n\nWe are pleased to inform you that a very important and unique event is coming up, which promises to be incredibly interesting and memorable. Here are some details about the upcoming event:\n\nDate: %s\nLocation: %s\nCost: %d tenge\n\nDon't miss the opportunity to be a part of this incredible event!\n\nBest regards,\nsxodim.astana\n\n", s.FirstName, s.LastName, event.Date, event.Place, event.Cost)
+}
+
+func main() {
+	publisher := NewEventPublisher()
+
+	subscriber1 := NewSubscriber("Meruert", "Sman")
+	subscriber2 := NewSubscriber("Jennie", "Kim")
+
+	publisher.Register(subscriber1)
+	publisher.Register(subscriber2)
+
+	event1 := Event{Date: "2023-09-27", Place: "Конференц-зал A", Cost: 2500}
+	event2 := Event{Date: "2023-10-10", Place: "Выставочный центр B", Cost: 1800}
+
+	publisher.NotifyAll(event1)
+	publisher.NotifyAll(event2)
+
+	publisher.Deregister(subscriber1)
+	publisher.Deregister(subscriber2)
+
+	event3 := Event{Date: "2023-11-15", Place: "Ресторан C", Cost: 1200.0}
+
+	publisher.NotifyAll(event3)
+}
