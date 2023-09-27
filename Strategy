@@ -1,73 +1,69 @@
 package main
+
 import (
-    "math"
+	"fmt"
+	"math"
 )
 
 type QuadraticEquationSolver interface {
-    Solve(a, b, c float64) (float64, float64, error)
+	Solve(a, b, c float64) (float64, float64, error)
 }
 
 type DiscriminantSolver struct{}
 
 func (d *DiscriminantSolver) Solve(a, b, c float64) (float64, float64, error) {
-    discriminant := b*b - 4*a*c
-    if discriminant < 0 {
-        return 0, 0, Error(«there is no answer)
-    }
-    x1 := (-b + math.Sqrt(discriminant)) / (2 * a)
-    x2 := (-b - math.Sqrt(discriminant)) / (2 * a)
-    return x1, x2, nil
+	discriminant := b*b - 4*a*c
+	if discriminant < 0 {
+		return 0, 0, fmt.Errorf("there is no answer")
+	}
+	x1 := (-b + math.Sqrt(discriminant)) / (2 * a)
+	x2 := (-b - math.Sqrt(discriminant)) / (2 * a)
+	return x1, x2, nil
 }
 
 type VietaSolver struct{}
 
 func (v *VietaSolver) Solve(a, b, c float64) (float64, float64, error) {
-    sumOfRoots := -b / a
-    productOfRoots := c / a
-    return sumOfRoots, productOfRoots, nil
+	sumOfRoots := -b / a
+	productOfRoots := c / a
+	return sumOfRoots, productOfRoots, nil
 }
 
-
 type EquationSolver struct {
-    solvingStrategy QuadraticEquationSolver
+	solvingStrategy QuadraticEquationSolver
 }
 
 func NewEquationSolver(strategy QuadraticEquationSolver) *EquationSolver {
-    return &EquationSolver{
-        solvingStrategy: strategy,
-    }
+	return &EquationSolver{
+		solvingStrategy: strategy,
+	}
 }
 
 func (e *EquationSolver) SetSolvingStrategy(strategy QuadraticEquationSolver) {
-    e.solvingStrategy = strategy
+	e.solvingStrategy = strategy
 }
 
 func (e *EquationSolver) SolveEquation(a, b, c float64) (float64, float64, error) {
-    return e.solvingStrategy.Solve(a, b, c)
+	return e.solvingStrategy.Solve(a, b, c)
 }
-
-import "fmt"
 
 func main() {
-       solver := NewEquationSolver(&DiscriminantSolver{})
-    
-    //  x^2 - 4x + 4 = 0 
-    x1, x2, err := solver.SolveEquation(1, -4, 4)
-    if err != nil {
-        fmt.Println(err)
-    } else {
-        fmt.Printf("discriminant: x1 = %.2f, x2 = %.2f\n", x1, x2)
-    }
+	solver := NewEquationSolver(&DiscriminantSolver{})
 
+	// x^2 - 4x + 4 = 0
+	x1, x2, err := solver.SolveEquation(1, -4, 4)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Printf("Discriminant: x1 = %.2f, x2 = %.2f\n", x1, x2)
+	}
 
-    solver.SetSolvingStrategy(&VietaSolver{})
+	solver.SetSolvingStrategy(&VietaSolver{})
 
-    sumOfRoots, productOfRoots, err := solver.SolveEquation(1, -4, 4)
-    if err != nil {
-        fmt.Println(err)
-    } else {
-        fmt.Printf("Viet: %.2f, Произведение корней: %.2f\n", sumOfRoots, productOfRoots)
-    }
+	sumOfRoots, productOfRoots, err := solver.SolveEquation(1, -4, 4)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Printf("Vieta: %.2f, Product of Roots: %.2f\n", sumOfRoots, productOfRoots)
+	}
 }
-
-
