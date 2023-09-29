@@ -1,2 +1,2 @@
 # SoftwareDesignPatternsASS1
-ASS 1 Software Design Patterns
+ASS 2 Software Design Patterns
