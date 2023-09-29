@@ -1,0 +1,72 @@
+package main
+
+import "fmt"
+
+type MusicalInstrument interface {
+	getDescription() string
+	setDescription(description string)
+	getPrice() int
+	setPrice(price int)
+}
+
+type Instrument struct {
+	description string
+	price       int
+}
+
+func (i *Instrument) getDescription() string {
+	return i.description
+}
+
+func (i *Instrument) getPrice() int {
+	return i.price
+}
+
+func (i *Instrument) setDescription(description string) {
+	i.description = description
+}
+
+func (i *Instrument) setPrice(price int) {
+	i.price = price
+}
+
+type Piano struct {
+	*Instrument
+}
+
+type Guitar struct {
+	*Instrument
+}
+
+type Drum struct {
+	*Instrument
+}
+
+func CreateInstrument(Type string) (MusicalInstrument, error) {
+	switch Type {
+	case "Piano":
+		return &Piano{&Instrument{"Piano", 4000000}}, nil
+	case "Guitar":
+		return &Guitar{&Instrument{"Guitar", 600000}}, nil
+	case "Drum":
+		return &Drum{&Instrument{"Drum", 40000}}, nil
+	default:
+		return nil, fmt.Errorf("Wrong instrument type passed")
+	}
+}
+
+func main() {
+	piano, _ := CreateInstrument("Piano")
+	guitar, _ := CreateInstrument("Guitar")
+	drum, _ := CreateInstrument("Drum")
+
+	printDetails(piano)
+	printDetails(guitar)
+	printDetails(drum)
+}
+
+func printDetails(m MusicalInstrument) {
+	fmt.Printf("Instrument: %s\n", m.getDescription())
+	fmt.Printf("Cost: %d\n", m.getPrice())
+	fmt.Println("-------------")
+}
