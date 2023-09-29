@@ -1,0 +1,87 @@
+package main
+
+import (
+	"fmt"
+)
+
+type IceCream interface {
+	getDescription() string
+	getCost() int
+}
+
+type BasicIceCream struct{}
+
+func (b *BasicIceCream) getDescription() string {
+	return "Basic Ice Cream"
+}
+
+func (b *BasicIceCream) getCost() int {
+	return 250
+}
+
+type ChocolateChipsDecorator struct {
+	iceCream IceCream
+}
+
+func (c *ChocolateChipsDecorator) getDescription() string {
+	decorate := c.iceCream.getDescription()
+	return decorate + " with chocolate chips"
+}
+
+func (c *ChocolateChipsDecorator) getCost() int {
+	cost := c.iceCream.getCost() + 250
+	return cost
+}
+
+type CaramelSyrupDecorator struct {
+	iceCream IceCream
+}
+
+func (c *CaramelSyrupDecorator) getDescription() string {
+	decorate := c.iceCream.getDescription()
+	return decorate + " with caramel syrup"
+}
+func (c *CaramelSyrupDecorator) getCost() int {
+	cost := c.iceCream.getCost() + 150
+	return cost
+}
+
+type StrawberrySyrupDecorator struct {
+	iceCream IceCream
+}
+
+func (c *StrawberrySyrupDecorator) getDescription() string {
+	decorate := c.iceCream.getDescription()
+	return decorate + " with strawberry syrup"
+}
+
+func (c *StrawberrySyrupDecorator) getCost() int {
+	cost := c.iceCream.getCost() + 250
+	return cost
+}
+
+func main() {
+
+	iceCream := &BasicIceCream{}
+
+	iceCreamWithChips := &ChocolateChipsDecorator{
+		iceCream: iceCream,
+	}
+
+	iceCreamWithTinsel := &CaramelSyrupDecorator{
+		iceCream: iceCreamWithChips,
+	}
+	iceCreamWithTinselStrawberry := &StrawberrySyrupDecorator{
+		iceCream: iceCreamWithChips,
+	}
+
+	decoratedTree := iceCreamWithTinsel.getDescription()
+	fmt.Println(decoratedTree)
+
+	fmt.Println("Cost :", iceCreamWithTinsel.getCost())
+	totalCostStrawberry := iceCreamWithTinselStrawberry.getCost()
+	decorated := iceCreamWithTinselStrawberry.getDescription()
+	fmt.Println(decorated)
+
+	fmt.Println("Cost :", totalCostStrawberry)
+}
