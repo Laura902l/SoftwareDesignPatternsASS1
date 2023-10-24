@@ -1,0 +1,42 @@
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+type Course struct {
+    Title       string
+    ViewedCount int
+    MaxViews    int
+}
+
+var courseInstance *Course
+var once sync.Once
+
+func getCourse() *Course {
+    return getSingleton()
+}
+
+func getSingleton() *Course {
+    once.Do(func() {
+        fmt.Println("You are watching the 1 free lesson")
+        courseInstance = &Course{Title: "MyCourse", MaxViews: 1}
+    })
+    return courseInstance
+}
+
+func main() {
+    var wg sync.WaitGroup
+
+    for i := 0; i < 5; i++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            getCourse()
+            fmt.Printf("No available. Please purchase the premium version\n")
+        }()
+    }
+
+    wg.Wait()
+}
