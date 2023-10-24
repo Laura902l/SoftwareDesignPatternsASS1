@@ -1,0 +1,45 @@
+import (
+	"fmt"
+)
+
+type Command interface {
+	Execute()
+}
+
+type NotificationSystem struct {
+	enabled bool
+}
+
+func (ns *NotificationSystem) Enable() {
+	ns.enabled = true
+	fmt.Println("Enable notifications")
+}
+
+func (ns *NotificationSystem) Disable() {
+	ns.enabled = false
+	fmt.Println("Notifications are turned off")
+}
+
+type EnableCommand struct {
+	system *NotificationSystem
+}
+
+func (ec *EnableCommand) Execute() {
+	ec.system.Enable()
+}
+
+type DisableCommand struct {
+	system *NotificationSystem
+}
+
+func (dc *DisableCommand) Execute() {
+	dc.system.Disable()
+}
+
+func main() {
+	notificationSystem := &NotificationSystem{}
+	enableCommand := &EnableCommand{system: notificationSystem}
+	disableCommand := &DisableCommand{system: notificationSystem}
+	enableCommand.Execute()
+	disableCommand.Execute()
+}
